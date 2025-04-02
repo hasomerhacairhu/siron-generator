@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <style>
+        @page {
+            margin: 2cm;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+        }
+        .page-break {
+            page-break-after: always;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .footer {
+            text-align: center;
+            font-size: 10px;
+            margin-top: 20px;
+            border-top: 1px solid #ccc;
+            padding-top: 10px;
+        }
+        .toc {
+            margin-bottom: 30px;
+        }
+        .toc-title {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .toc-entry {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        .toc-leader {
+            flex-grow: 1;
+            margin: 0 5px;
+            border-bottom: 1px dotted #999;
+        }
+        .song-container {
+            margin-bottom: 30px;
+        }
+        .song-header {
+            border-bottom: 2px solid #333;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+        .song-title {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .song-id {
+            font-size: 16px;
+            color: #666;
+        }
+        .song-content {
+            white-space: pre-line;
+        }
+        .page-continue-marker {
+            text-align: right;
+            font-style: italic;
+            margin-top: 20px;
+        }
+        {% block additional_styles %}{% endblock %}
+    </style>
+</head>
+<body>
+    {% block content %}{% endblock %}
+</body>
+</html>
