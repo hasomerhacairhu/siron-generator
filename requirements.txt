@@ -2,7 +2,8 @@
 openpyxl==3.1.2
 Jinja2==3.1.2
 pdfkit==1.0.0
-
-
 numpy==1.23.4 
 pandas==1.5.3
+dotenv
+qrcode
+pillow

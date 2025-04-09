@@ -1,128 +1,210 @@
-# Siron Song Book Generator
+# Siron Songbook Generator
 
-A Python-based tool to generate song books in multiple formats from Excel data.
+A tool for generating songbooks in PDF format from an Excel file, with different versions for singers, musicians, and projection.
 
-## Features
+## Table of Contents
 
-- Generates three document types:
-  - Song book with lyrics (A4 format)
-  - Song book with chords (A4 format)
-  - Presentation slides (16:9 format)
-- Automatically handles song pagination for longer songs
-- Creates multiple table of contents (by ID and by song name)
-- Customizable templates using Jinja2
+- [Overview](#overview)
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Generating JSON from Excel](#generating-json-from-excel)
+  - [Generating Song Pages](#generating-song-pages)
+  - [Generating Table of Contents](#generating-table-of-contents)
+  - [Creating Complete Songbooks](#creating-complete-songbooks)
+- [Directory Structure](#directory-structure)
+- [Customization](#customization)
+- [Troubleshooting](#troubleshooting)
 
-## Setup
+## Overview
 
-1. Set up a virtual environment (recommended):
-   ```bash
-   # Create a virtual environment
-   python -m venv venv
-   
-   # Activate the virtual environment
-   # On Windows:
-   .\.venv\Scripts\activate.bat
+This application automates the generation of songbooks in PDF format, with different versions:
 
-   Set-ExecutionPolicy -Scope CurrentUser unrestricted
-   .\.venv\Scripts\activate.ps1
+- **Singer's Songbook**: Contains only lyrics in A4 portrait format
+- **Musician's Songbook**: Contains lyrics and chords in A4 portrait format
+- **Projection Songbook**: Contains lyrics in 16:9 aspect ratio for screen display
 
-   # On macOS/Linux:
-   source venv/bin/activate
-   ```
-   
-   Your command prompt should now show `(venv)` at the beginning of the line, indicating the virtual environment is active.
+The system uses:
+- Python scripts for data processing
+- Jinja2 templates for page layouts
+- wkhtmltopdf for HTML to PDF conversion
+- PyPDF2 for merging multiple PDFs
 
-2. Install dependencies:
-   - Install Python dependencies using `pip install -r requirements.txt`.
+## Installation
 
-3. Install wkhtmltopdf on Windows:
-   - Download the installer from [wkhtmltopdf.org](https://wkhtmltopdf.org/downloads.html).
-   - Run the installer and follow the installation wizard.
-   - Make sure to remember the installation path (default is `C:\Program Files\wkhtmltopdf`).
-   - Verify the installation by running `wkhtmltopdf --version` in Command Prompt.
-   - Update the `WKHTMLTOPDF_PATH` variable in `main.py` to match your installation path if needed:
-     ```python
-     WKHTMLTOPDF_PATH = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
-     ```
+### Prerequisites
 
-4. Place your Excel file in the `data` directory:
-   - Only the "Siron" sheet will be processed
-   - Ensure column A contains the song ID parameter
+- Python 3.6 or higher
+- wkhtmltopdf
+
+### Step 1: Clone the repository
+
+```bash
+git clone https://github.com/yourusername/siron-generator.git
+cd siron-generator
+```
+
+### Step 2: Install Python dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+This will install all required Python packages:
+- pandas
+- jinja2
+- pypdf2
+- openpyxl
+
+### Step 3: Install wkhtmltopdf
+
+#### Windows
+1. Download the installer from [wkhtmltopdf downloads](https://wkhtmltopdf.org/downloads.html)
+2. Run the installer and follow the installation wizard
+3. Make sure the wkhtmltopdf executable is in your system PATH
+
+#### macOS
+```bash
+brew install wkhtmltopdf
+```
+
+#### Linux (Ubuntu/Debian)
+```bash
+sudo apt-get install wkhtmltopdf
+```
 
 ## Usage
 
-### Basic Usage
+### Generating JSON from Excel
 
-Generate all document types:
-```shell
-python main.py
+Place your input Excel file (`Siron.xlsx`) in the `data` directory, then run:
+
+```bash
+python src/generate_json.py
 ```
 
-### Advanced Usage
+This will create a `songs.json` file in the data directory, which contains all the song information in a structured format.
 
-#### Generate Specific Document Type
+### Generating Song Pages
 
-To generate only the song book with lyrics:
-```shell
-python main.py --type lyrics
+To generate a page for a specific song:
+
+```bash
+python src/generate_songbook_page.py --song-id [ID] --version [singer|musician|projection]
 ```
 
-To generate only the song book with chords:
-```shell
-python main.py --type chords
+Options:
+- `--song-id`: The ID of the song to generate a page for
+- `--version`: Songbook version to generate (singer, musician, or projection)
+- `--templates-dir`: Directory containing template files (default: ../templates)
+- `--output-dir`: Directory to save output files (default: ../output)
+- `--json-file`: Path to the JSON file containing song data (default: ../data/songs.json)
+
+Example:
+```bash
+python src/generate_songbook_page.py --song-id ZS08 --version musician
 ```
 
-To generate only the presentation slides:
-```shell
-python main.py --type slides
+### Generating Table of Contents
+
+To generate a table of contents:
+
+```bash
+python src/generate_toc.py --version [singer|musician] --toc-version [1|2]
 ```
 
-#### Customize Templates
+Options:
+- `--version`: Songbook version to generate (singer or musician)
+- `--toc-version`: ToC version: 1 for ordered by ID, 2 for alphabetical by title
+- `--templates-dir`: Directory containing template files (default: ../templates)
+- `--output-dir`: Directory to save output files (default: ../output)
+- `--json-file`: Path to the JSON file containing song data (default: ../data/songs.json)
 
-You can customize the templates used for generating documents. The templates are located in the `templates` directory. Modify the HTML files to suit your needs.
-
-#### Pagination Settings
-
-For longer songs, pagination is automatically handled. You can adjust pagination settings in the `config.py` file.
-
-#### Table of Contents
-
-The script generates multiple table of contents:
-- By ID
-- By song name
-
-You can customize the appearance of the table of contents in the templates.
-
-#### Excel File Requirements
-
-Ensure your Excel file is placed in the `data` directory and contains a sheet named "Siron". The script processes only this sheet. Ensure column A contains the song ID parameter.
-
-#### Debugging
-
-If you encounter issues, use the `--debug` flag to enable debug mode:
-```shell
-python main.py --debug
+Example:
+```bash
+python src/generate_toc.py --version singer --toc-version 2
 ```
-This will provide detailed logs to help you troubleshoot.
+
+Note: Projection version does not include a table of contents.
+
+### Creating Complete Songbooks
+
+To generate a complete songbook:
+
+```bash
+python src/generate_complete_songbook.py --version [singer|musician|projection] --toc-version [1|2|none]
+```
+
+Options:
+- `--version`: Songbook version to generate (singer, musician, or projection)
+- `--toc-version`: ToC version: 1 for ordered by ID, 2 for alphabetical by title, none for no ToC
+- `--templates-dir`: Directory containing template files (default: ../templates)
+- `--output-dir`: Directory to save output files (default: ../output)
+- `--json-file`: Path to the JSON file containing song data (default: ../data/songs.json)
+
+Example:
+```bash
+python src/generate_complete_songbook.py --version musician --toc-version 1
+```
+
+## Directory Structure
+
+```
+siron-generator/
+├── data/
+│   ├── Siron.xlsx          # Input Excel file
+│   └── songs.json          # Converted JSON data
+├── output/
+│   ├── singers_songbook/   # Generated PDFs for singers
+│   ├── musicians_songbook/ # Generated PDFs for musicians
+│   └── projection_songbook/ # Generated PDFs for projection
+├── src/
+│   ├── generate_json.py     # Converts Excel to JSON
+│   ├── generate_songbook_page.py # Generates individual song pages
+│   ├── generate_toc.py      # Generates table of contents
+│   └── generate_complete_songbook.py # Generates entire songbooks
+└── templates/
+    ├── toc_template_1.html  # ToC ordered by ID
+    ├── toc_template_2.html  # ToC ordered alphabetically
+    ├── singer_song_page_template.html # Singer version template
+    ├── musician_song_page_template.html # Musician version template
+    └── projection_song_page_template.html # Projection version template
+```
+
+## Customization
+
+### Template Customization
+
+You can modify the HTML templates in the `templates` directory to change the appearance of your songbooks:
+
+- **Singer's template**: Modify `singer_song_page_template.html`
+- **Musician's template**: Modify `musician_song_page_template.html`
+- **Projection template**: Modify `projection_song_page_template.html`
+- **Table of Contents templates**: Modify `toc_template_1.html` or `toc_template_2.html`
+
+### CSS Styling
+
+Each template includes CSS styling within the `<style>` section that can be customized to change:
+
+- Fonts and text sizes
+- Colors
+- Spacing and margins
+- Page dimensions
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **'python' is not recognized as a command:**
-   - Ensure Python is installed and added to your PATH environment variable
-   - Try using `py` or `python3` instead
+1. **wkhtmltopdf not found**: Ensure wkhtmltopdf is installed and in your system PATH
 
-2. **Cannot activate virtual environment:**
-   - On Windows, you might need to set execution policy: `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process`
-   - Make sure you created the virtual environment correctly
+2. **Missing dependencies**: Make sure all required Python packages are installed:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-3. **Package installation errors:**
-   - Make sure your virtual environment is activated (you should see `(venv)` in your command prompt)
-   - Try updating pip: `pip install --upgrade pip`
-   - If a package fails to install, check for any system dependencies it might require
+3. **Template errors**: If you customize templates, verify your HTML/CSS is valid
 
-4. **Deactivating the virtual environment:**
-   - Simply type `deactivate` in your command prompt
-   - Your command prompt should no longer show `(venv)` at the beginning
+4. **Excel parsing errors**: Ensure your Excel file follows the expected format
 
+### Getting Help
+
+For additional assistance or to report bugs, please create an issue on the GitHub repository.

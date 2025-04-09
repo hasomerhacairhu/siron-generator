@@ -2,7 +2,7 @@ import pandas as pd
 import json
 import os
 
-def extract_data_to_json(excel_path='data/Siron.xlsx', output_path='data/songs.json'):
+def extract_data_to_json(excel_path='../data/Siron.xlsx', output_path='../data/songs.json'):
     """
     Extract song data from Excel file and save as JSON
     
@@ -21,10 +21,10 @@ def extract_data_to_json(excel_path='data/Siron.xlsx', output_path='data/songs.j
         'Dalszöveg akkordokkal': 'lyrics_with_chords',
         'Kategória': 'category',
         'Youtube link': 'youtube',
-        'Érzékeny tartalom': 'explicit_content',
-        'Állapot': 'status',
-        'Dalszöveg tömb': 'lyrics_array',
-        'Akkord Tömb': 'chords_array'
+        # 'Érzékeny tartalom': 'explicit_content',
+        # 'Állapot': 'status',
+        # 'Dalszöveg tömb': 'lyrics_array',
+        # 'Akkord Tömb': 'chords_array'
     }
     
     try:
@@ -91,7 +91,7 @@ if __name__ == "__main__":
     
     # Provide a summary of the data
     try:
-        with open('data/songs.json', 'r', encoding='utf-8') as f:
+        with open('../data/songs.json', 'r', encoding='utf-8') as f:
             songs = json.load(f)
             
         print("\nSummary:")

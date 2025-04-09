@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{ song.title }} - Musician Version</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+        .page-header {
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .song-id {
+            background-color: #eee;
+            border: 1px solid #ccc;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .song-category {
+            color: #666;
+            font-style: italic;
+        }
+        .song-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .song-author {
+            color: #444;
+        }
+        .song-info {
+            margin-bottom: 15px;
+        }
+        .song-info p {
+            margin: 5px 0;
+        }
+        .musical-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .musical-info div {
+            background-color: #e6f2ff;
+            padding: 8px 12px;
+            border-radius: 4px;
+            border-left: 3px solid #4a90e2;
+        }
+        .lyrics-container {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .lyrics {
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+        }
+        .chords-container {
+            background-color: #f3f3ff;
+            border: 1px solid #ccccdd;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .chords {
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+        }
+        .metadata {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-header">
+        <div>
+            <span class="song-id">ID: {{ song.id }}</span>
+            <span class="song-category">{{ song.category }}</span>
+        </div>
+    </div>
+    
+    <div class="song-info">
+        <h1 class="song-title">{{ song.title }}</h1>
+        <p class="song-author">By: {{ song.author }}</p>
+        
+        {% if song.original_title %}
+        <p><strong>Original Title:</strong> {{ song.original_title }}</p>
+        {% endif %}
+        
+        {% if song.year %}
+        <p><strong>Year:</strong> {{ song.year }}</p>
+        {% endif %}
+    </div>
+    
+    <div class="musical-info">
+        {% if song.key %}
+        <div><strong>Key:</strong> {{ song.key }}</div>
+        {% endif %}
+        
+        {% if song.tempo %}
+        <div><strong>Tempo:</strong> {{ song.tempo }}</div>
+        {% endif %}
+        
+        {% if song.time_signature %}
+        <div><strong>Time Signature:</strong> {{ song.time_signature }}</div>
+        {% endif %}
+    </div>
+    
+    {% if song.chords %}
+    <div class="chords-container">
+        <div class="section-title">Chords:</div>
+        <div class="chords">{{ song.chords }}</div>
+    </div>
+    {% endif %}
+    
+    <div class="lyrics-container">
+        <div class="section-title">Lyrics:</div>
+        <div class="lyrics">{{ song.lyrics }}</div>
+    </div>
+    
+    {% if song.notes %}
+    <div class="metadata">
+        <div class="section-title">Notes:</div>
+        <p>{{ song.notes }}</p>
+    </div>
+    {% endif %}
+    
+    <div class="footer" style="position: absolute; bottom: 20px; left: 20px; right: 20px; padding: 10px 0; border-top: 1px solid #999; display: flex; justify-content: space-between; font-size: 12px; color: #666;">
+        <div>{{ footer.left }}</div>
+        <div>{{ footer.right }}</div>
+    </div>
+</body>
+</html>
