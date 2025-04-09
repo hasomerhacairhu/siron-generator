@@ -35,6 +35,8 @@ def generate_qr_code(url):
     """
     if not url:
         return None
+    
+    print(f"Generating QR code for URL: {url}")
             
     qr = qrcode.QRCode(
         version=1,
@@ -55,6 +57,14 @@ def generate_qr_code(url):
     
     return f"data:image/png;base64,{img_str}"
 
+def process_line_breaks(text):
+    """
+    Replace \n characters with HTML line breaks
+    """
+    if not text:
+        return text
+    return text.replace('\n', '<br>')
+
 def render_template(template_path, song_data):
     """
     Render a Jinja2 template with the provided song data.
@@ -62,16 +72,27 @@ def render_template(template_path, song_data):
     template_dir = os.path.dirname(template_path)
     template_file = os.path.basename(template_path)
     
+    # Process line breaks in lyrics and chords
+    if 'lyrics' in song_data:
+        song_data['lyrics'] = process_line_breaks(song_data['lyrics'])
+    if 'lyrics_with_chords' in song_data:
+        song_data['lyrics_with_chords'] = process_line_breaks(song_data['lyrics_with_chords'])
+    
     env = Environment(loader=FileSystemLoader(template_dir))
     template = env.get_template(template_file)
-
+    
+    # Add footer text for the template
+    footer = {
+        'left': "Hasomer Hacair Magyarország",
+        'right': "Siron - Daloskönyv"
+    }
     
     # Generate QR code if YouTube link exists
     qr_code_data = None
     if 'youtube' in song_data and song_data['youtube']:
         qr_code_data = generate_qr_code(song_data['youtube'])
     
-    return template.render(song=song_data, qr_code_data=qr_code_data)
+    return template.render(song=song_data, footer=footer, qr_code_data=qr_code_data)
 
 def html_to_pdf(html_content, output_path, version):
     """

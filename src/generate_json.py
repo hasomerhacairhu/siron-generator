@@ -21,7 +21,7 @@ def extract_data_to_json(excel_path='../data/Siron.xlsx', output_path='../data/s
         'Dalszöveg akkordokkal': 'lyrics_with_chords',
         'Kategória': 'category',
         'Youtube link': 'youtube',
-        # 'Érzékeny tartalom': 'explicit_content',
+        'Érzékeny tartalom': 'explicit_content',
         # 'Állapot': 'status',
         # 'Dalszöveg tömb': 'lyrics_array',
         # 'Akkord Tömb': 'chords_array'
