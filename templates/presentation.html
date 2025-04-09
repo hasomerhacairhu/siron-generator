@@ -4,51 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ title }}</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #000;
-            color: #fff;
-        }
-        .slide {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 40px;
-            page-break-after: always;
-        }
-        .title-slide {
-            background: linear-gradient(45deg, #1a2a6c, #b21f1f, #fdbb2d);
-        }
-        .song-title {
-            font-size: 48px;
-            margin-bottom: 20px;
-        }
-        .song-content {
-            font-size: 36px;
-            white-space: pre-line;
-            max-width: 80%;
-        }
-        .song-id {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            font-size: 24px;
-            opacity: 0.7;
-        }
-        .lyric-slide {
-            background-color: #000;
-            background-image: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
-                              url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1IiBoZWlnaHQ9IjUiPgo8cmVjdCB3aWR0aD0iNSIgaGVpZ2h0PSI1IiBmaWxsPSIjMjIyIj48L3JlY3Q+CjxwYXRoIGQ9Ik0wIDVMNSAwWk02IDRMNCA2Wk0tMSAxTDEgLTFaIiBzdHJva2U9IiMzMzMiIHN0cm9rZS13aWR0aD0iMSI+PC9wYXRoPgo8L3N2Zz4=');
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
-<body>
+<body class="presentation">
     <!-- Title Slide -->
     <div class="slide title-slide">
         <h1 class="song-title" style="font-size: 60px;">Song Presentation</h1>
