@@ -78,6 +78,16 @@ def render_template(template_path, song_data):
     if 'lyrics_with_chords' in song_data:
         song_data['lyrics_with_chords'] = process_line_breaks(song_data['lyrics_with_chords'])
     
+    # Load CSS file content
+    css_path = os.path.join(template_dir, "style.css")
+    style_content = ""
+    try:
+        with open(css_path, 'r', encoding='utf-8') as css_file:
+            style_content = css_file.read()
+        print(f"Successfully loaded CSS from: {css_path}")
+    except Exception as e:
+        print(f"Warning: Could not load CSS file: {e}")
+    
     env = Environment(loader=FileSystemLoader(template_dir))
     template = env.get_template(template_file)
     
@@ -92,7 +102,7 @@ def render_template(template_path, song_data):
     if 'youtube' in song_data and song_data['youtube']:
         qr_code_data = generate_qr_code(song_data['youtube'])
     
-    return template.render(song=song_data, footer=footer, qr_code_data=qr_code_data)
+    return template.render(song=song_data, footer=footer, qr_code_data=qr_code_data, style=style_content)
 
 def html_to_pdf(html_content, output_path, version):
     """
@@ -138,10 +148,10 @@ def html_to_pdf(html_content, output_path, version):
         print(f"Generated PDF: {output_path}")
     except subprocess.CalledProcessError as e:
         print(f"Error generating PDF: {e}")
-    finally:
-        # Clean up temporary HTML file
-        if os.path.exists(temp_html):
-            os.remove(temp_html)
+    # finally:
+    #     # Clean up temporary HTML file
+    #     if os.path.exists(temp_html):
+    #         os.remove(temp_html)
 
 def get_template_for_version(templates_dir, version):
     """
