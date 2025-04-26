@@ -10,6 +10,10 @@ from jinja2 import Environment, FileSystemLoader
 from dotenv import load_dotenv
 import qrcode
 
+TEMP_PATH = "../temp/"
+OUTPUT_PATH = "../output/"
+TEMPLATES_PATH = "../templates/"
+
 # Load environment variables from .env file
 load_dotenv()
 
@@ -69,8 +73,10 @@ def render_template(template_path, song_data):
     """
     Render a Jinja2 template with the provided song data.
     """
+    page_data = {}
     template_dir = os.path.dirname(template_path)
     template_file = os.path.basename(template_path)
+    page_data['static_path'] = 'file:///' + os.path.abspath(os.path.join(os.path.dirname(template_path), "static")).replace(os.sep, '/')
     
     # Process line breaks in lyrics and chords
     if 'lyrics' in song_data:
@@ -78,31 +84,16 @@ def render_template(template_path, song_data):
     if 'lyrics_with_chords' in song_data:
         song_data['lyrics_with_chords'] = process_line_breaks(song_data['lyrics_with_chords'])
     
-    # Load CSS file content
-    css_path = os.path.join(template_dir, "style.css")
-    style_content = ""
-    try:
-        with open(css_path, 'r', encoding='utf-8') as css_file:
-            style_content = css_file.read()
-        print(f"Successfully loaded CSS from: {css_path}")
-    except Exception as e:
-        print(f"Warning: Could not load CSS file: {e}")
-    
     env = Environment(loader=FileSystemLoader(template_dir))
     template = env.get_template(template_file)
     
-    # Add footer text for the template
-    footer = {
-        'left': "Hasomer Hacair Magyarország",
-        'right': "Siron - Daloskönyv"
-    }
+
     
     # Generate QR code if YouTube link exists
-    qr_code_data = None
     if 'youtube' in song_data and song_data['youtube']:
-        qr_code_data = generate_qr_code(song_data['youtube'])
+        song_data['qr_code_data'] = generate_qr_code(song_data['youtube'])
     
-    return template.render(song=song_data, footer=footer, qr_code_data=qr_code_data, style=style_content)
+    return template.render(song=song_data, page=page_data)
 
 def html_to_pdf(html_content, output_path, version):
     """
@@ -110,7 +101,7 @@ def html_to_pdf(html_content, output_path, version):
     Adjust page size based on version.
     """
     # Create temporary HTML file
-    temp_html = os.path.join(os.path.dirname(output_path), "temp.html")
+    temp_html = os.path.join(os.path.dirname(TEMP_PATH), "temp.html")
     with open(temp_html, 'w', encoding='utf-8') as file:
         file.write(html_content)
     
@@ -120,22 +111,27 @@ def html_to_pdf(html_content, output_path, version):
         page_options = [
             "--page-width", "1920px",
             "--page-height", "1080px",
-            "--margin-top", "50px",
-            "--margin-bottom", "50px",
-            "--margin-left", "50px",
-            "--margin-right", "50px"
+            "--margin-top", "0px",
+            "--margin-bottom", "0px",
+            "--margin-left", "0px",
+            "--margin-right", "0px",
+            "--zoom", "1.0",
+            "--disable-smart-shrinking"
         ]
     else:
         # A4 portrait
         page_options = [
             "--page-size", "A4",
             "--orientation", "Portrait",
-            "--margin-top", "15",
-            "--margin-bottom", "15",
-            "--margin-left", "30",
-            "--margin-right", "20"
+            "--margin-top", "10",
+            "--margin-bottom", "10",
+            "--margin-left", "20",
+            "--margin-right", "15"
         ]
-
+    
+    # Add allow local file access flag
+    page_options += ["--enable-local-file-access"]
+    
     # Ensure output directory exists
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     
@@ -145,7 +141,7 @@ def html_to_pdf(html_content, output_path, version):
     
     try:
         result = subprocess.run(cmd, check=True)
-        print(f"Generated PDF: {output_path}")
+        print(f"Successfully generated PDF: {output_path}")
     except subprocess.CalledProcessError as e:
         print(f"Error generating PDF: {e}")
     # finally:
@@ -195,9 +191,9 @@ if __name__ == "__main__":
     parser.add_argument("--song-id", required=True, help="ID of the song to generate a page for")
     parser.add_argument("--version", choices=["singer", "musician", "projection"], 
                         required=True, help="Songbook version to generate")
-    parser.add_argument("--templates-dir", default="../templates", 
+    parser.add_argument("--templates-dir", default=TEMPLATES_PATH, 
                         help="Directory containing template files")
-    parser.add_argument("--output-dir", default="../output", 
+    parser.add_argument("--output-dir", default=OUTPUT_PATH, 
                         help="Directory to save output files")
     parser.add_argument("--json-file", default="../data/songs.json", 
                         help="Path to the JSON file containing song data")

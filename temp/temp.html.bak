@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Egyszerű dal</title>
+
+    <!-- <style>@page {
+    size: A4;
+    margin: 20mm;
+}
+html, body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    height: 100%;
+}
+body {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    line-height: 1.5;
+    box-sizing: border-box;
+}
+table.song-header {
+    border-bottom: 2px solid #333;
+    margin-bottom: 20px;
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 10px;
+}
+table.song-header td {
+    padding-bottom: 10px;
+}
+.header-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    font-size: 12px;
+    color: #666;
+}
+.song-id {
+    border: 1px solid #666;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+.song-category {
+    color: #666;
+    font-style: italic;
+}
+.song-explicit-content {
+    background-color: #666;
+    color: white;   
+    font-weight: bold;
+    padding: 6px;
+    border-radius: 4px;
+    margin-left: auto; /* Push to right */
+    display: inline-block;
+    text-transform: none;
+    font-size: 10px;
+    border: 1px solid #333;
+    box-shadow: 0px 3px 6px #AAA;
+}
+.song-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 10px 0;
+}
+.song-author {
+    color: #444;
+}
+.song-info {
+    margin-bottom: 15px;
+}
+.song-info p {
+    margin: 5px 0;
+}
+.lyrics-container {
+    border: 1px solid #999;
+    border-radius: 5px;
+    padding: 15px;
+    margin: 15px 0;
+}
+.lyrics {
+    font-family: 'Courier New', monospace;
+    font-size: 18px;
+    line-height: 1.3;
+    font-weight: bold;
+    /* Remove white-space: pre-wrap as we're using <br> tags */
+}
+.metadata {
+    border: 1px solid #999;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 15px;
+}
+.section-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+}
+.page-footer {
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    width: calc(100% - 3.5cm); /* Leave space for QR code */
+    padding: 10px 20px;
+    box-sizing: border-box;
+}
+.qr-code {
+    position: fixed;
+    bottom: 0px;
+    right: 0px;
+    width: 3cm;
+    height: 3cm;
+}
+.qr-code img {
+    width: 100%;
+    height: 100%;
+}
+.content-wrapper {
+    flex: 1;
+}
+@media print {
+    .content-wrapper {
+        margin-bottom: 50px;
+    }
+}</style> -->
+    <style src="X:/_DEV/siron-generator/templates/static/style.css"></style>
+</head>
+<body>
+    <div class="content-wrapper">
+        <!-- Organization header with left and right aligned text -->
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
+            <tr>
+                <td style="text-align: left;">
+                    <div style="font-size: 14px; color: #666;">
+                        <img src="X:/_DEV/siron-generator/templates/static/header_logo.png" alt="Logo" style="width: 50px; height: auto; vertical-align: middle; margin-right: 5px;">
+                        Hasomer Hacair
+                    </div>
+                </td>
+                <td style="text-align: center;">
+                    <div style="font-size: 14px; color: #666;">Daloskönyv énekeseknek</div>
+                </td>
+                <td style="text-align: right;">
+                    <div style="font-size: 14px; color: #666;">Siron la-zmarmim שירון לזמרים</div>
+                </td>
+            </tr>
+        </table>
+        <table class="song-header">
+            <tr>
+                <td style="text-align: left;">
+                    <span class="song-id">T72</span>
+                    <span class="song-category">Tábori dalok</span>
+                </td>
+                <td style="text-align: right;">
+                    
+                    <div class="song-explicit-content">Szókimondó szövegek!</div>
+                    
+                </td>
+            </tr>
+        </table>
+        
+        <!-- Song information header -->
+        
+        <!-- Song title and author in one line with alignment -->
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+            <tr>
+                <td style="text-align: left; vertical-align: middle;">
+                    <h1 class="song-title" style="margin: 0;">Egyszerű dal</h1>
+                </td>
+                
+                <td style="text-align: right; vertical-align: middle;">
+                    <p class="song-author" style="margin: 0;">Előadó: Tankcsapda</p>
+                </td>
+                
+            </tr>
+        </table>
+        
+        <div class="lyrics-container">
+            <div class="lyrics">Néha úgy hiányzik a marijuana,<br>mint a hercegnőnek Don Juan,<br>ha az erkélyről a szemébe néz, vonzza,<br>mit méhet a méz, meg az a srác,<br>akit már te is láttál és tudtam jól utálja magát,<br>de mégse hittem volna,<br>hogy a végén előveszi a pisztolyát.<br><br>Refr.:<br>Ez csak egy egyszerû dal,<br>semmit nem akar, néha ilyen is kell,<br>ez csak egy egyszerû dal semmit nem akar,<br>de ennél többet nem árulhatok el.<br><br>Valami szomorú dallam hangjai<br>halkan kísértenek éjszakákon át,<br>velem vannak és együtt dúdolgatjuk<br>a halál dalát: hogy ez a szerelem nekem<br>nem a május, én örülök, ha valahogy túl élem,<br>a szerelem csak egy rohadt mágus,<br>ha elkapom úgyis kiherélem.<br><br>Ref.<br><br>Repülőgépek, óceánok, a füvek,<br>a fák, a mezők, a virágok.<br>A különös álmok, amiket látok,<br>ha egyszer éjjel hiába vártok.<br><br>Ref.</div>
+        </div>
+        
+        
+    </div>
+    <div class="page-footer">
+        <div style="font-size: 14px; color: #666;">Szabadon letölthető: https://somer.hu/siron</div>
+    </div>
+</body>
+</html>

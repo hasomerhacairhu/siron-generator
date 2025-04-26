@@ -1,7 +1,7 @@
 @page {
-    size: A4;
-    margin: 20mm;
+    size: A4; /* A4 size */
 }
+
 html, body {
     font-family: 'Arial', sans-serif;
     margin: 0;
@@ -16,29 +16,27 @@ body {
     line-height: 1.5;
     box-sizing: border-box;
 }
-.page-header {
+table.song-header {
     border-bottom: 2px solid #333;
-    padding-bottom: 10px;
     margin-bottom: 20px;
-    display: flex;
-    justify-content: space-between;
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 10px;
 }
-.header-info {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    font-size: 12px;
-    color: #666;
+table.song-header td {
+    padding-bottom: 10px;
 }
 .song-id {
     border: 1px solid #666;
     padding: 3px 8px;
     border-radius: 4px;
     font-weight: bold;
+    font-size: 18px;
 }
 .song-category {
-    color: #666;
+    color: #333;
     font-style: italic;
+    font-size: 16px;
 }
 .song-explicit-content {
     background-color: #666;
@@ -61,12 +59,6 @@ body {
 .song-author {
     color: #444;
 }
-.song-info {
-    margin-bottom: 15px;
-}
-.song-info p {
-    margin: 5px 0;
-}
 .lyrics-container {
     border: 1px solid #999;
     border-radius: 5px;
@@ -75,36 +67,47 @@ body {
 }
 .lyrics {
     font-family: 'Courier New', monospace;
-    font-size: 16px;
+    font-size: 18px;
     line-height: 1.3;
     font-weight: bold;
-    /* Remove white-space: pre-wrap as we're using <br> tags */
+
+
 }
-.metadata {
-    border: 1px solid #999;
-    padding: 10px;
-    border-radius: 5px;
-    margin-top: 15px;
-}
-.section-title {
+
+.lyrics_with_chords {
+    font-family: 'Courier New', monospace;
+    font-size: 18px;
+    line-height: 1.3;
     font-weight: bold;
-    margin-bottom: 5px;
-    color: #333;
+    white-space: pre-wrap; /* Preserve whitespace and line breaks */
 }
+table.page-header {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+}
+
+table.page-header tr td {
+    font-size: 14px;
+    padding: 5px;
+    color: #999;
+    vertical-align: middle;
+}
+
 .page-footer {
     position: fixed;
     bottom: 0px;
     left: 0px;
-    width: calc(100% - 3.5cm); /* Leave space for QR code */
-    padding: 10px 20px;
+    width: calc(100% - 3cm); /* Leave space for QR code */
+    padding: 0;
     box-sizing: border-box;
 }
 .qr-code {
     position: fixed;
     bottom: 0px;
     right: 0px;
-    width: 3.5cm;
-    height: 3.5cm;
+    width: 3cm;
+    height: 3cm;
 }
 .qr-code img {
     width: 100%;

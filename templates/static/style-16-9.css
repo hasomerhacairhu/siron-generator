@@ -1,0 +1,117 @@
+@page {
+    size: 1920px 1080px;
+}
+html, body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 50px;
+    min-height: 100%;
+    height: 100%;
+    color: #000;
+    background-color: #fff;
+}
+body {
+    padding: 20px;
+    line-height: 1.5;
+    box-sizing: border-box;
+}
+.content-wrapper {
+    height: 100%;
+    position: relative;
+    padding-bottom: 60px; /* Space for QR code */
+}
+.song-header-inline {
+    display: block;
+    margin-bottom: 15px;
+    white-space: nowrap;
+    text-align: left;
+}
+.song-id {
+    display: inline-block;
+    border: 1px solid #999;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    color: #000;
+    font-size: 24px;
+    vertical-align: middle;
+}
+.song-category {
+    display: inline-block;
+    color: #666;
+    font-style: italic;
+    font-size: 24px;
+    margin-left: 15px;
+    vertical-align: middle;
+}
+.song-title {
+    display: inline-block;
+    font-size: 48px;
+    font-weight: bold;
+    margin: 0 15px;
+    vertical-align: middle;
+}
+.song-author {
+    display: inline-block;
+    font-size: 24px;
+    color: #666;
+    margin: 0 15px 0 auto;
+    vertical-align: middle;
+}
+.song-explicit-content {
+    display: inline-block;
+    background-color: #900;
+    color: white;   
+    font-weight: bold;
+    padding: 10px;
+    border-radius: 8px;
+    text-transform: none;
+    font-size: 20px;
+    border: 1px solid black;
+    vertical-align: middle;
+}
+.right-aligned {
+    float: right;
+}
+.lyrics-container {
+    border: 1px solid #333;
+    border-radius: 10px;
+    padding: 30px;
+    margin: 20px 0;
+    background-color: white;
+    min-height: 500px;
+    clear: both;
+    overflow: visible;
+}
+.lyrics {
+    font-family: 'Arial', sans-serif;
+    font-size: 36px;
+    line-height: 1.2;
+    font-weight: bold;
+    text-align: center;
+}
+/* Two-column layout styles */
+.two-columns {
+    column-count: 2;
+    column-gap: 40px;
+    column-fill: balance;
+}
+.lyrics-column {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    margin-bottom: 20px;
+}
+.qr-code {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 150px;
+    height: 150px;
+}
+.qr-code img {
+    width: 100%;
+    height: 100%;
+}
+.song-header-table {
+    display: none;
+}

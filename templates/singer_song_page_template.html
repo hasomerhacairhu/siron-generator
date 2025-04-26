@@ -3,37 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ song.title }}</title>
-    <style>
-        {{ style }}
-    </style>
+
+    <link rel="stylesheet" href="{{ page.static_path }}/style-a4.css" type="text/css" media="all" />
 </head>
 <body>
     <div class="content-wrapper">
         <!-- Organization header with left and right aligned text -->
-        <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
+        <table class="page-header" width="100%">
             <tr>
                 <td style="text-align: left;">
-                    <div style="font-size: 14px; color: #666;">Hasomer Hacair</div>
+                        <div style="display: flex; align-items: center;">
+                            <img src="{{ page.static_path }}/header-logo.png" alt="Logo" style="width: 25px; height: auto; margin-right: 5px;">
+                            <span>Hasomer Hacair</span>
+                        </div>
                 </td>
                 <td style="text-align: center;">
-                    <div style="font-size: 14px; color: #666;">Daloskönyv énekeseknek</div>
+                        Daloskönyv énekeseknek
                 </td>
                 <td style="text-align: right;">
-                    <div style="font-size: 14px; color: #666;">Siron la-zmarmim שירון לזמרים</div>
+                        Siron la-zmarmim שירון לזמרים
+                </td>
+            </tr>
+        </table>
+        <table class="song-header">
+            <tr>
+                <td style="text-align: left;">
+                    <span class="song-id">{{ song.id }}</span>
+                    <span class="song-category">{{ song.category }}</span>
+                </td>
+                <td style="text-align: right;">
+                    {% if song.explicit_content %}
+                    <div class="song-explicit-content">Szókimondó szövegek!</div>
+                    {% endif %}
                 </td>
             </tr>
         </table>
         
         <!-- Song information header -->
-        <div class="page-header">
-            <div style="flex: 1; display: flex; align-items: center;">
-                <span class="song-id">{{ song.id }}</span>
-                <span class="song-category">{{ song.category }}</span>
-            </div>
-            {% if song.explicit_content %}
-            <div class="song-explicit-content">Szókimondó szövegek!</div>
-            {% endif %}
-        </div>
         
         <!-- Song title and author in one line with alignment -->
         <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
@@ -53,9 +59,9 @@
             <div class="lyrics">{{ song.lyrics }}</div>
         </div>
         
-        {% if qr_code_data %}
+        {% if song.qr_code_data %}
         <div class="qr-code">
-            <img src="{{ qr_code_data }}" alt="YouTube QR Code">
+            <img src="{{ song.qr_code_data }}" alt="YouTube QR kód">
         </div>
         {% endif %}
     </div>
