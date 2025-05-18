@@ -1,0 +1,99 @@
+{
+  "paths": {
+    "data_dir": "../data/",
+    "siron_excel_filename": "Siron.xlsx",
+    "songs_json_filename": "songs.json",
+    "output_dir": "../output/",
+    "temp_dir": "../temp/",
+    "templates_dir": "../templates/",
+    "static_dir_name": "static",
+    "wkhtmltopdf": "D:/Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe"
+  },
+  "file_names": {
+    "temp_html_page": "temp.html",
+    "temp_html_toc": "temp_toc.html",
+    "song_page_prefix": "song_",
+    "song_page_suffix": ".pdf",
+    "toc_pdf_ordered": "table_of_contents_by_id.pdf",
+    "toc_pdf_alphabetical": "table_of_contents_by_title.pdf"
+  },
+  "templates": {
+    "singer_song_page": "song_page_template.html",
+    "musician_song_page": "song_page_template.html",
+    "projection_song_page": "projection_song_page_template.html",
+    "toc_template": "toc_template.html"
+  },
+  "page_parameters": {
+    "projection": {
+      "page_width": "1920px",
+      "page_height": "1080px",
+      "margin_top": "0px",
+      "margin_bottom": "0px",
+      "margin_left": "0px",
+      "margin_right": "0px",
+      "zoom": "1.0",
+      "extra_options": ["--disable-smart-shrinking", "--enable-local-file-access"]
+    },
+    "a4_song": {
+      "page_size": "A4",
+      "orientation": "Portrait",
+      "margin_top": "15",
+      "margin_bottom": "15",
+      "margin_left": "20",
+      "margin_right": "15",
+      "extra_options": ["--enable-local-file-access"]
+    },
+    "a4_toc": {
+      "page_size": "A4",
+      "orientation": "Portrait",
+      "margin_top": "15",
+      "margin_bottom": "15",
+      "margin_left": "20",
+      "margin_right": "15",
+      "extra_options": ["--enable-local-file-access"]
+    }
+  },
+  "output_formats": {
+    "songbook_subdir_template": "{version}s_songbook"
+  },
+  "excel_column_mapping": {
+    "Azon": "original_id",
+    "Cím": "title",
+    "Szerző": "author",
+    "Dalszöveg": "lyrics",
+    "Dalszöveg akkordokkal": "lyrics_with_chords",
+    "Kategória": "category",
+    "Youtube link": "youtube",
+    "Érzékeny tartalom": "explicit_content",
+    "Tartalomjegyzékből kimarad": "skip_toc",
+    "Cím suffix": "title_suffix"
+  },
+  "lyrics": {
+    "lines_thresholds": {
+      "small": 45,
+      "large": 25
+    },
+    "column_break_threshold": 60
+  },
+
+  "guitar_chords": [
+    "A", "Am", "A7", "Amaj7", "Am7", "Asus4", "Adim", "Aaug", "Aadd9", "A6", "Am6", "A5",
+    "A#", "A#m", "A#7", "A#maj7", "A#m7", "A#sus4", "A#dim", "A#aug", "A#add9", "A#6", "A#m6", "A#5",
+    "Bb", "Bbm", "Bb7", "Bbmaj7", "Bbm7", "Bbsus4", "Bbdim", "Bbaug", "Bbadd9", "Bb6", "Bbm6", "Bb5",
+    "B", "Bm", "B7", "Bmaj7", "Bm7", "Bsus4", "Bdim", "Baug", "Badd9", "B6", "Bm6", "B5",
+    "C", "Cm", "C7", "Cmaj7", "Cm7", "Csus4", "Cdim", "Caug", "Cadd9", "C6", "Cm6", "C5",
+    "C#", "C#m", "C#7", "C#maj7", "C#m7", "C#sus4", "C#dim", "C#aug", "C#add9", "C#6", "C#m6", "C#5",
+    "Db", "Dbm", "Db7", "Dbmaj7", "Dbm7", "Dbsus4", "Dbdim", "Dbaug", "Dbadd9", "Db6", "Dbm6", "Db5",
+    "D", "Dm", "D7", "Dmaj7", "Dm7", "Dsus4", "Ddim", "Daug", "Dadd9", "D6", "Dm6", "D5",
+    "D#", "D#m", "D#7", "D#maj7", "D#m7", "D#sus4", "D#dim", "D#aug", "D#add9", "D#6", "D#m6", "D#5",
+    "Eb", "Ebm", "Eb7", "Ebmaj7", "Ebm7", "Ebsus4", "Ebdim", "Ebaug", "Ebadd9", "Eb6", "Ebm6", "Eb5",
+    "E", "Em", "E7", "Emaj7", "Em7", "Esus4", "Edim", "Eaug", "Eadd9", "E6", "Em6", "E5",
+    "F", "Fm", "F7", "Fmaj7", "Fm7", "Fsus4", "Fdim", "Faug", "Fadd9", "F6", "Fm6", "F5",
+    "F#", "F#m", "F#7", "F#maj7", "F#m7", "F#sus4", "F#dim", "F#aug", "F#add9", "F#6", "F#m6", "F#5",
+    "Gb", "Gbm", "Gb7", "Gbmaj7", "Gbm7", "Gbsus4", "Gbdim", "Gbaug", "Gbadd9", "Gb6", "Gbm6", "Gb5",
+    "G", "Gm", "G7", "Gmaj7", "Gm7", "Gsus4", "Gdim", "Gaug", "Gadd9", "G6", "Gm6", "G5",
+    "G#", "G#m", "G#7", "G#maj7", "G#m7", "G#sus4", "G#dim", "G#aug", "G#add9", "G#6", "G#m6", "G#5",
+    "Ab", "Abm", "Ab7", "Abmaj7", "Abm7", "Absus4", "Abdim", "Abaug", "Abadd9", "Ab6", "Abm6", "Ab5",
+    "H", "Hm", "H7", "Hmaj7", "Hm7", "Hsus4", "Hdim", "Haug", "Hadd9", "H6", "Hm6", "H5"
+  ]
+}

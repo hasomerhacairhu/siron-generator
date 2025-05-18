@@ -2,30 +2,28 @@ import pandas as pd
 import json
 import os
 
-def extract_data_to_json(excel_path='../data/Siron.xlsx', output_path='../data/songs.json'):
+# Load configuration
+CONFIG_FILE_PATH = os.path.join(os.path.dirname(__file__), '..', 'config.json')
+with open(CONFIG_FILE_PATH, 'r', encoding='utf-8') as f:
+    CONFIG = json.load(f)
+
+def extract_data_to_json(excel_path=None, output_path=None):
     """
     Extract song data from Excel file and save as JSON
     
     Args:
-        excel_path: Path to Excel file
-        output_path: Path to save JSON output
+        excel_path: Path to Excel file. Defaults to path from config.
+        output_path: Path to save JSON output. Defaults to path from config.
     """
+    if excel_path is None:
+        excel_path = os.path.join(CONFIG['paths']['data_dir'], CONFIG['paths']['siron_excel_filename'])
+    if output_path is None:
+        output_path = os.path.join(CONFIG['paths']['data_dir'], CONFIG['paths']['songs_json_filename'])
+        
     print(f"Reading data from {excel_path}...")
     
-    # Mapping of Hungarian column headers to JSON property names
-    column_mapping = {
-        'Id': 'id',
-        'Cím': 'title',
-        'Szerző': 'author',
-        'Dalszöveg': 'lyrics',
-        'Dalszöveg akkordokkal': 'lyrics_with_chords',
-        'Kategória': 'category',
-        'Youtube link': 'youtube',
-        'Érzékeny tartalom': 'explicit_content',
-        # 'Állapot': 'status',
-        # 'Dalszöveg tömb': 'lyrics_array',
-        # 'Akkord Tömb': 'chords_array'
-    }
+    # Mapping of Hungarian column headers to JSON property names from config
+    column_mapping = CONFIG['excel_column_mapping']
     
     try:
         # Read the Excel file
@@ -41,12 +39,15 @@ def extract_data_to_json(excel_path='../data/Siron.xlsx', output_path='../data/s
         
         # Create a list to hold our song objects
         songs = []
+        inner_id_counter = 0
         
         # Process each row
         for _, row in df.iterrows():
+            inner_id_counter += 1
             # Create a song object with mapped properties
             song = {
-                "id": str(row[first_column])  # Ensure ID is a string
+                "id": str(row[first_column]),  # Ensure ID is a string
+                "inner_id": str(inner_id_counter) # Add new inner_id
             }
             
             # Map each column to the corresponding JSON property if it exists
@@ -72,6 +73,7 @@ def extract_data_to_json(excel_path='../data/Siron.xlsx', output_path='../data/s
             songs.append(song)
         
         # Create directory if it doesn't exist
+        # Ensure the output directory from config exists
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         
         # Write to JSON file
@@ -91,7 +93,8 @@ if __name__ == "__main__":
     
     # Provide a summary of the data
     try:
-        with open('../data/songs.json', 'r', encoding='utf-8') as f:
+        summary_json_path = os.path.join(CONFIG['paths']['data_dir'], CONFIG['paths']['songs_json_filename'])
+        with open(summary_json_path, 'r', encoding='utf-8') as f:
             songs = json.load(f)
             
         print("\nSummary:")

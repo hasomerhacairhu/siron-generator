@@ -12,7 +12,7 @@ html, body {
 body {
     display: flex;
     flex-direction: column;
-    padding: 20px;
+    padding: 0px;
     line-height: 1.5;
     box-sizing: border-box;
 }
@@ -56,31 +56,45 @@ table.song-header td {
     font-weight: bold;
     margin: 10px 0;
 }
+
+.song-title-suffix { 
+    color: #666;
+}
 .song-author {
     color: #444;
 }
 .lyrics-container {
+    font-family: 'Courier New', monospace;
     border: 1px solid #999;
     border-radius: 5px;
     padding: 15px;
     margin: 15px 0;
 }
-.lyrics {
-    font-family: 'Courier New', monospace;
-    font-size: 18px;
+.lyrics-l {
+    font-size: 20px;
     line-height: 1.3;
     font-weight: bold;
-
-
 }
-
-.lyrics_with_chords {
-    font-family: 'Courier New', monospace;
-    font-size: 18px;
+.lyrics-m {
+    font-size: 16px;
     line-height: 1.3;
-    font-weight: bold;
-    white-space: pre-wrap; /* Preserve whitespace and line breaks */
+    font-weight: normal;
 }
+.lyrics-s {
+    font-size: 14px;
+    line-height: 1.1;
+    font-weight: normal;
+}
+
+.chord {
+    font-weight: bold;
+    background-color: #ddd; /* Very light grey background */
+    padding: 1px;
+    border-radius: 3px; /* Rounded corners */
+    line-height: inherit; /* Ensure it does not change the general line height */
+}
+
+
 table.page-header {
     width: 100%;
     border-collapse: collapse;
@@ -120,4 +134,67 @@ table.page-header tr td {
     .content-wrapper {
         margin-bottom: 50px;
     }
+}
+
+/* TOC Specific Styles */
+
+.toc-header {
+    text-align: center;
+    font-size: 36pt;
+    margin-bottom: 6px;
+}
+
+.toc-subtitle {
+    text-align: center;
+    font-style: italic;
+    font-size: 18pt;
+    margin-bottom: 10px;
+}
+
+.toc-table { /* Renamed from generic table to avoid conflicts */
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 9pt;
+}
+
+.toc-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    text-align: left;
+    padding: 0px;
+    border-bottom: 2px solid #ddd;
+}
+
+.toc-table td {
+    padding: 3px;
+    border-bottom: 1px solid #ddd;
+    vertical-align: top;
+}
+
+.toc-id-column { /* Prefixed with toc- */
+    width: 4%;
+}
+
+.toc-title-column { /* Prefixed with toc- */
+    width: 25%;
+}
+
+.toc-author-column { /* Prefixed with toc- */
+    width: 20%;
+    color: #666;
+}
+
+.toc-spacer-column { /* Prefixed with toc- */
+    width: 2%;
+}
+
+/* .page-number class was in the template CSS but not used in the HTML structure provided.
+   If it's needed, it can be styled here. For now, it's commented out.
+.page-number {
+    text-align: right;
+}
+*/
+
+.page-break { /* This is a utility class, can remain generic */
+    page-break-after: always;
 }

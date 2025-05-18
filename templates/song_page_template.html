@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>{{ song.title }}</title>
 
-    <link rel="stylesheet" href="{{ page.static_path }}/style-a4.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="{{ song.static_path }}/style-a4.css" type="text/css" media="all" />
 </head>
 <body>
     <div class="content-wrapper">
@@ -13,15 +13,23 @@
             <tr>
                 <td style="text-align: left;">
                         <div style="display: flex; align-items: center;">
-                            <img src="{{ page.static_path }}/header-logo.png" alt="Logo" style="width: 25px; height: auto; margin-right: 5px;">
+                            <img src="{{ song.static_path }}/header-logo.png" alt="Logo" style="width: 25px; height: auto; margin-right: 5px;">
                             <span>Hasomer Hacair</span>
                         </div>
                 </td>
                 <td style="text-align: center;">
+                        {% if song.version == "singer" %}
+                        Daloskönyv énekeseknek
+                        {% elif song.version == "musician" %}
                         Daloskönyv zenészeknek
+                        {% endif %}
                 </td>
                 <td style="text-align: right;">
+                        {% if song.version == "singer" %}
+                        Siron la-zmarmim שירון לזמרים
+                        {% elif song.version == "musician" %}
                         Siron la-naganim שירון לנגנים
+                        {% endif %}
                 </td>
             </tr>
         </table>
@@ -45,7 +53,10 @@
         <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
             <tr>
                 <td style="text-align: left; vertical-align: middle;">
-                    <h1 class="song-title" style="margin: 0;">{{ song.title }}</h1>
+                    <h1 class="song-title">
+                        {{ song.title }} 
+                        <span class="song-title-suffix">{{ song.title_suffix }}</span>
+                    </h1>
                 </td>
                 {% if song.author %}
                 <td style="text-align: right; vertical-align: middle;">
@@ -56,7 +67,20 @@
         </table>
         
         <div class="lyrics-container">
-            <div class="lyrics_with_chords">{{ song.lyrics_with_chords }}</div>
+            {% if song.columns == 1 %}
+                <div class="{{ song.lyrics_css }}">{{ song.lyrics }}</div>
+            {% elif song.columns == 2 %}
+                <table class="lyrics-table" style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                        <td style="width: 50%; vertical-align: top;">
+                            <div class="{{ song.lyrics_css }}">{{ song.lyrics[0] }}</div>
+                        </td>
+                        <td style="width: 50%; vertical-align: top;">
+                            <div class="{{ song.lyrics_css }}">{{ song.lyrics[0] }}</div>
+                        </td>
+                    </tr>
+                </table>
+            {% endif %}
         </div>
         
         {% if song.qr_code_data %}

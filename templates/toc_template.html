@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tartalomjegyzék - {% if sort_order == "id" %}azonosítói szerint{% else %}címei szerint{% endif %}</title> <!-- Dynamic title -->
+    <link rel="stylesheet" href="{{ page.static_path }}/style-a4.css" type="text/css" media="all" />
+</head>
+<body class="content-wrapper">
+        <!-- Organization header with left and right aligned text -->
+        <table class="page-header" width="100%">
+            <tr>
+                <td style="text-align: left;">
+                        <div style="display: flex; align-items: center;">
+                            <img src="{{ page.static_path }}/header-logo.png" alt="Logo" style="width: 25px; height: auto; margin-right: 5px;">
+                            <span>Hasomer Hacair</span>
+                        </div>
+                </td>
+                <td style="text-align: center;">
+                        Daloskönyv zenészeknek
+                </td>
+                <td style="text-align: right;">
+                        Siron la-naganim שירון לנגנים
+                </td>
+            </tr>
+        </table>
+    <h1 class="toc-header">Tartalomjegyzék</h1>
+    <div class="toc-subtitle">Dalok {% if sort_order == "id" %}azonosító szerint rendezve{% else %}cím szerint ábécérendben{% endif %}.</div> <!-- Dynamic subtitle -->
+    
+    <table class="toc-table">
+        <thead>
+            <tr>
+                {% if sort_order == "id" %}
+                <th class="toc-id-column">Azon</th>
+                <th class="toc-title-column">Cím</th>
+                <th class="toc-author-column">Szerző</th>
+                <th class="toc-spacer-column"></th>
+                <th class="toc-id-column">Azon</th>
+                <th class="toc-title-column">Cím</th>
+                <th class="toc-author-column">Szerző</th>
+                {% else %}
+                <th class="toc-title-column">Cím</th>
+                <th class="toc-author-column">Szerző</th>
+                <th class="toc-id-column">Azon</th>
+                <th class="toc-spacer-column"></th>
+                <th class="toc-title-column">Cím</th>
+                <th class="toc-author-column">Szerző</th>
+                <th class="toc-id-column">Azon</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for song in songs %}
+                {% if loop.index0 is divisibleby 2 %}
+                <tr>
+                    {% if sort_order == "id" %}
+                    <td class="toc-id-column">{{ song.id }}</td>
+                    <td class="toc-title-column">{{ song.title }}</td>
+                    <td class="toc-author-column">{{ song.author }}</td>
+                    {% else %}
+                    <td class="toc-title-column">{{ song.title }}</td>
+                    <td class="toc-author-column">{{ song.author }}</td>
+                    <td class="toc-id-column">{{ song.id }}</td>
+                    {% endif %}
+                    <td class="toc-spacer-column"></td>
+                    {% if loop.nextitem is defined %}
+                        {% if sort_order == "id" %}
+                        <td class="toc-id-column">{{ loop.nextitem.id }}</td>
+                        <td class="toc-title-column">{{ loop.nextitem.title }}</td>
+                        <td class="toc-author-column">{{ loop.nextitem.author }}</td>
+                        {% else %}
+                        <td class="toc-title-column">{{ loop.nextitem.title }}</td>
+                        <td class="toc-author-column">{{ loop.nextitem.author }}</td>
+                        <td class="toc-id-column">{{ loop.nextitem.id }}</td>
+                        {% endif %}
+                    {% else %}
+                        <td class="toc-id-column"></td>
+                        <td class="toc-title-column"></td>
+                        <td class="toc-author-column"></td>
+                    {% endif %}
+                </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

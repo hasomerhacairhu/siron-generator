@@ -9,13 +9,43 @@ from io import BytesIO
 from jinja2 import Environment, FileSystemLoader
 from dotenv import load_dotenv
 import qrcode
+import re
 
-TEMP_PATH = "../temp/"
-OUTPUT_PATH = "../output/"
-TEMPLATES_PATH = "../templates/"
+# Load configuration
+CONFIG_FILE_PATH = os.path.join(os.path.dirname(__file__), '..', 'config.json')
+with open(CONFIG_FILE_PATH, 'r', encoding='utf-8') as f:
+    CONFIG = json.load(f)
 
 # Load environment variables from .env file
 load_dotenv()
+
+def wrap_chords_in_lyrics(text_with_chords):
+    """
+    Finds words in the input text that are guitar chords (from config)
+    and wraps them in a <span class="chord">CHORD</span>.
+    """
+    if not text_with_chords:
+        return ""
+    
+    chords = CONFIG.get('guitar_chords', [])
+    if not chords:
+        return text_with_chords
+        
+    # Sort chords by length in descending order to match longer chords first (e.g., "Am7" before "A")
+    # Also, escape special characters in chords for regex.
+    sorted_chords_escaped = sorted(map(re.escape, chords), key=len, reverse=True)
+    
+    # Pattern to match standalone chords.
+    # (?<!\S) asserts position is not preceded by a non-whitespace character.
+    # (?!\S) asserts position is not followed by a non-whitespace character.
+    # This effectively matches whole words separated by whitespace.
+    # The inner parentheses create a capturing group for the chord itself.
+    chord_pattern_str = r'(?<!\S)(' + '|'.join(sorted_chords_escaped) + r')(?!\S)'
+    
+    def replace_chord(match):
+        return f'<span class="chord">{match.group(1)}</span>' # match.group(1) is the captured chord
+        
+    return re.sub(chord_pattern_str, replace_chord, text_with_chords)
 
 def load_song_data(json_file_path, song_id=None):
     """
@@ -28,7 +58,7 @@ def load_song_data(json_file_path, song_id=None):
     
     if song_id is not None:
         for song in songs:
-            if str(song['id']) == str(song_id):
+            if str(song['inner_id']) == str(song_id): # Changed 'id' to 'inner_id'
                 return song
         raise ValueError(f"Song with ID {song_id} not found.")
     return songs
@@ -69,31 +99,102 @@ def process_line_breaks(text):
         return text
     return text.replace('\n', '<br>')
 
+def break_lyrics_into_columns(lyrics_html, num_columns):
+    """
+    Breaks lyrics into the specified number of columns.
+    Currently supports 2 columns, splitting at a <br><br> tag
+    that is closest to the middle of the content.
+
+    Returns:
+        list: A list containing two strings: [column1_html, column2_html].
+              If no split is performed, column1_html is the original lyrics_html
+              and column2_html is an empty string.
+    """
+    if not lyrics_html or num_columns <= 1:
+        return [lyrics_html, ""]
+
+    if num_columns == 2:
+        sections = lyrics_html.split('<br><br>')
+        
+        if len(sections) <= 1:
+            # No <br><br> found, or only one section, so cannot split by this rule.
+            return [lyrics_html, ""]
+
+        total_char_count = len(lyrics_html)
+        ideal_col1_char_count = total_char_count / 2.0
+        
+        best_split_point_index = -1
+        min_abs_diff_from_middle = float('inf')
+
+        # Iterate through all possible split points
+        for i in range(len(sections) - 1):
+            col1_candidate_sections = sections[:i+1]
+            col1_candidate_content = "<br><br>".join(col1_candidate_sections)
+            current_col1_len = len(col1_candidate_content)
+            
+            abs_diff = abs(current_col1_len - ideal_col1_char_count)
+            
+            if abs_diff < min_abs_diff_from_middle:
+                min_abs_diff_from_middle = abs_diff
+                best_split_point_index = i
+
+        if best_split_point_index != -1:
+            col1_final_sections = sections[:best_split_point_index+1]
+            col2_final_sections = sections[best_split_point_index+1:]
+            
+            col1_content = "<br><br>".join(col1_final_sections)
+            col2_content = "<br><br>".join(col2_final_sections)
+            
+            return [col1_content, col2_content]
+        else:
+            # This case implies no suitable split point was found,
+            # though with len(sections) > 1, a best_split_point_index should be found.
+            # Safely return original content in first column.
+            return [lyrics_html, ""]
+    else:
+        # For num_columns other than 2, return original lyrics in first column.
+        return [lyrics_html, ""]
+
 def render_template(template_path, song_data):
     """
     Render a Jinja2 template with the provided song data.
     """
-    page_data = {}
+    song_data['columns'] = 1
     template_dir = os.path.dirname(template_path)
     template_file = os.path.basename(template_path)
-    page_data['static_path'] = 'file:///' + os.path.abspath(os.path.join(os.path.dirname(template_path), "static")).replace(os.sep, '/')
-    
-    # Process line breaks in lyrics and chords
-    if 'lyrics' in song_data:
+    # Construct static path using config
+    static_path_abs = os.path.abspath(os.path.join(CONFIG['paths']['templates_dir'], CONFIG['paths']['static_dir_name']))
+    song_data['static_path'] = 'file:///' + static_path_abs.replace(os.sep, '/')
+
+
+    if song_data['version'] == "musician":
+        song_data['lyrics'] = process_line_breaks(wrap_chords_in_lyrics(song_data['lyrics_with_chords']))
+    else: # For other versions like projection, handle lyrics if necessary
         song_data['lyrics'] = process_line_breaks(song_data['lyrics'])
-    if 'lyrics_with_chords' in song_data:
-        song_data['lyrics_with_chords'] = process_line_breaks(song_data['lyrics_with_chords'])
-    
+
+    # Determine the CSS class for lyrics based on length thresholds from config
+    lyrics_length = len(song_data['lyrics'].split('<br>'))
+    if lyrics_length >= CONFIG['lyrics']['column_break_threshold']:
+        song_data['columns'] = 2
+
+    if song_data['columns'] > 1:
+        song_data['lyrics'] = break_lyrics_into_columns(song_data['lyrics'], song_data['columns'])
+
+    if lyrics_length <= CONFIG['lyrics']['lines_thresholds']['large']:
+        song_data['lyrics_css'] = 'lyrics-l'
+    elif lyrics_length >= CONFIG['lyrics']['lines_thresholds']['small']:
+        song_data['lyrics_css'] = 'lyrics-s'
+    else:
+        song_data['lyrics_css'] = 'lyrics-m'
+   
     env = Environment(loader=FileSystemLoader(template_dir))
     template = env.get_template(template_file)
     
-
-    
     # Generate QR code if YouTube link exists
-    if 'youtube' in song_data and song_data['youtube']:
+    if 'youtube' in song_data and song_data['version'] == "musician":
         song_data['qr_code_data'] = generate_qr_code(song_data['youtube'])
     
-    return template.render(song=song_data, page=page_data)
+    return template.render(song=song_data)
 
 def html_to_pdf(html_content, output_path, version):
     """
@@ -101,42 +202,41 @@ def html_to_pdf(html_content, output_path, version):
     Adjust page size based on version.
     """
     # Create temporary HTML file
-    temp_html = os.path.join(os.path.dirname(TEMP_PATH), "temp.html")
+    temp_html = os.path.join(CONFIG['paths']['temp_dir'], CONFIG['file_names']['temp_html_page'])
     with open(temp_html, 'w', encoding='utf-8') as file:
         file.write(html_content)
     
-    # Set page parameters based on version
+    # Set page parameters based on version from config
     if version == "projection":
-        # 16:9 aspect ratio
+        params = CONFIG['page_parameters']['projection']
         page_options = [
-            "--page-width", "1920px",
-            "--page-height", "1080px",
-            "--margin-top", "0px",
-            "--margin-bottom", "0px",
-            "--margin-left", "0px",
-            "--margin-right", "0px",
-            "--zoom", "1.0",
-            "--disable-smart-shrinking"
+            "--page-width", params['page_width'],
+            "--page-height", params['page_height'],
+            "--margin-top", params['margin_top'],
+            "--margin-bottom", params['margin_bottom'],
+            "--margin-left", params['margin_left'],
+            "--margin-right", params['margin_right'],
+            "--zoom", params['zoom']
         ]
-    else:
-        # A4 portrait
+    else: # singer or musician (A4)
+        params = CONFIG['page_parameters']['a4_song']
         page_options = [
-            "--page-size", "A4",
-            "--orientation", "Portrait",
-            "--margin-top", "10",
-            "--margin-bottom", "10",
-            "--margin-left", "20",
-            "--margin-right", "15"
+            "--page-size", params['page_size'],
+            "--orientation", params['orientation'],
+            "--margin-top", params['margin_top'],
+            "--margin-bottom", params['margin_bottom'],
+            "--margin-left", params['margin_left'],
+            "--margin-right", params['margin_right']
         ]
     
-    # Add allow local file access flag
-    page_options += ["--enable-local-file-access"]
-    
+    # Add common extra options from config
+    page_options += params.get('extra_options', [])
+        
     # Ensure output directory exists
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     
     # Execute wkhtmltopdf command
-    wkhtmltopdf_path = os.getenv('WKHTMLTOPDF_PATH', os.path.join("C:\\Program Files\\wkhtmltopdf\\bin", "wkhtmltopdf.exe"))
+    wkhtmltopdf_path = os.getenv('WKHTMLTOPDF_PATH', CONFIG['paths']['wkhtmltopdf'])
     cmd = [wkhtmltopdf_path] + page_options + [temp_html, output_path]
     
     try:
@@ -144,21 +244,17 @@ def html_to_pdf(html_content, output_path, version):
         print(f"Successfully generated PDF: {output_path}")
     except subprocess.CalledProcessError as e:
         print(f"Error generating PDF: {e}")
-    # finally:
-    #     # Clean up temporary HTML file
-    #     if os.path.exists(temp_html):
-    #         os.remove(temp_html)
 
 def get_template_for_version(templates_dir, version):
     """
     Return the appropriate template file path based on the songbook version.
     """
     if version == "singer":
-        return os.path.join(templates_dir, "singer_song_page_template.html")
+        return os.path.join(templates_dir, CONFIG['templates']['singer_song_page'])
     elif version == "musician":
-        return os.path.join(templates_dir, "musician_song_page_template.html")
+        return os.path.join(templates_dir, CONFIG['templates']['musician_song_page'])
     elif version == "projection":
-        return os.path.join(templates_dir, "projection_song_page_template.html")
+        return os.path.join(templates_dir, CONFIG['templates']['projection_song_page'])
     else:
         raise ValueError(f"Invalid version: {version}")
 
@@ -169,6 +265,9 @@ def generate_song_page(song_id, version, templates_dir, output_dir, json_file):
     # Load song data
     song_data = load_song_data(json_file, song_id)
     
+    # Add version to song_data so it can be passed to render_template
+    song_data['version'] = version
+
     # Get the appropriate template
     template_path = get_template_for_version(templates_dir, version)
     
@@ -176,9 +275,10 @@ def generate_song_page(song_id, version, templates_dir, output_dir, json_file):
     html_content = render_template(template_path, song_data)
     
     # Generate output file path
-    output_subdir = f"{version}s_songbook"
+    output_subdir_template = CONFIG['output_formats']['songbook_subdir_template']
+    output_subdir = output_subdir_template.format(version=version)
     os.makedirs(os.path.join(output_dir, output_subdir), exist_ok=True)
-    output_filename = f"song_{song_id}.pdf"
+    output_filename = f"{CONFIG['file_names']['song_page_prefix']}{song_data['inner_id']}{CONFIG['file_names']['song_page_suffix']}"
     output_path = os.path.join(output_dir, output_subdir, output_filename)
     
     # Convert HTML to PDF
@@ -188,14 +288,14 @@ def generate_song_page(song_id, version, templates_dir, output_dir, json_file):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate a songbook page for a specific song.")
-    parser.add_argument("--song-id", required=True, help="ID of the song to generate a page for")
+    parser.add_argument("--song-id", required=True, help="Inner ID of the song to generate a page for")
     parser.add_argument("--version", choices=["singer", "musician", "projection"], 
                         required=True, help="Songbook version to generate")
-    parser.add_argument("--templates-dir", default=TEMPLATES_PATH, 
+    parser.add_argument("--templates-dir", default=CONFIG['paths']['templates_dir'], 
                         help="Directory containing template files")
-    parser.add_argument("--output-dir", default=OUTPUT_PATH, 
+    parser.add_argument("--output-dir", default=CONFIG['paths']['output_dir'], 
                         help="Directory to save output files")
-    parser.add_argument("--json-file", default="../data/songs.json", 
+    parser.add_argument("--json-file", default=os.path.join(CONFIG['paths']['data_dir'], CONFIG['paths']['songs_json_filename']), 
                         help="Path to the JSON file containing song data")
     
     args = parser.parse_args()
