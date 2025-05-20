@@ -45,19 +45,18 @@ def sort_songs(songs, sort_by="id"):
     else:
         raise ValueError(f"Invalid sort_by parameter: {sort_by}")
 
-def render_toc_template(template_path, songs_data, sort_order):
+def render_toc_template(template_path, data):
     """Render a ToC template with the provided songs data and sort order."""
-    page_data = {}
     template_dir = os.path.dirname(template_path)
     template_file = os.path.basename(template_path)
     # Corrected static path to be relative to the templates_dir from config
     static_path_abs = os.path.abspath(os.path.join(CONFIG['paths']['templates_dir'], CONFIG['paths']['static_dir_name']))
-    page_data['static_path'] = 'file:///' + static_path_abs.replace(os.sep, '/')
+    data['static_path'] = 'file:///' + static_path_abs.replace(os.sep, '/')
     
     env = Environment(loader=FileSystemLoader(template_dir))
     template = env.get_template(template_file)
 
-    return template.render(songs=songs_data, page=page_data, sort_order=sort_order) # Pass sort_order to template
+    return template.render(data=data) # Pass sort_order to template
 
 def html_to_pdf(html_content, output_path):
     """Convert HTML content to PDF using wkhtmltopdf."""
@@ -122,8 +121,13 @@ def generate_toc(version, toc_version, templates_dir, output_dir, json_file):
     template_filename = CONFIG['templates']['toc_template']
     template_path = os.path.join(templates_dir, template_filename)
     
+    data = {
+        "songs": sorted_songs,
+        "version": version,
+        "sort_by": sort_by,
+    }
     # Render HTML, passing the sort_by value as sort_order for the template
-    html_content = render_toc_template(template_path, sorted_songs, sort_by)
+    html_content = render_toc_template(template_path, data)
     
     # Generate output file path
     output_subdir_template = CONFIG['output_formats']['songbook_subdir_template']

@@ -45,6 +45,7 @@ table.song-header td {
     padding: 6px;
     border-radius: 4px;
     margin-left: auto; /* Push to right */
+    margin-right: 5px; /* Add some space from the right */
     display: inline-block;
     text-transform: none;
     font-size: 10px;
@@ -71,12 +72,12 @@ table.song-header td {
     margin: 15px 0;
 }
 .lyrics-l {
-    font-size: 20px;
+    font-size: 24px;
     line-height: 1.3;
     font-weight: bold;
 }
 .lyrics-m {
-    font-size: 16px;
+    font-size: 20px;
     line-height: 1.3;
     font-weight: normal;
 }

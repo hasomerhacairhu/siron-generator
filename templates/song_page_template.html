@@ -26,9 +26,9 @@
                 </td>
                 <td style="text-align: right;">
                         {% if song.version == "singer" %}
-                        Siron la-zmarmim שירון לזמרים
+                        Sirim lezámárim שִׁירִים לְזַמָּרִים
                         {% elif song.version == "musician" %}
-                        Siron la-naganim שירון לנגנים
+                        Sirim lenágánim שִׁירִים לְנַגָּנִים
                         {% endif %}
                 </td>
             </tr>
@@ -84,9 +84,11 @@
         </div>
         
         {% if song.qr_code_data %}
-        <div class="qr-code">
-            <img src="{{ song.qr_code_data }}" alt="YouTube QR kód">
-        </div>
+        <a href="{{ song.youtube }}" target="_blank">
+            <div class="qr-code">
+                <img src="{{ song.qr_code_data }}" alt="YouTube QR kód">
+            </div>
+        </a>
         {% endif %}
     </div>
     <div class="page-footer">

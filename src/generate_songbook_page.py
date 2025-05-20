@@ -191,7 +191,7 @@ def render_template(template_path, song_data):
     template = env.get_template(template_file)
     
     # Generate QR code if YouTube link exists
-    if 'youtube' in song_data and song_data['version'] == "musician":
+    if 'youtube' in song_data and song_data['version'] == "singer":
         song_data['qr_code_data'] = generate_qr_code(song_data['youtube'])
     
     return template.render(song=song_data)
