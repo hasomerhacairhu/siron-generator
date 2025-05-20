@@ -10,9 +10,9 @@ A tool for generating songbooks in PDF format from an Excel file, with different
   - [Generating JSON from Excel](#generating-json-from-excel)
   - [Generating Song Pages](#generating-song-pages)
   - [Generating Table of Contents](#generating-table-of-contents)
-  - [Creating Complete Songbooks](#creating-complete-songbooks)
   - [Generating All Pages for a Version (New)](#generating-all-pages-for-a-version-new)
   - [Building a Final Merged Songbook (New)](#building-a-final-merged-songbook-new)
+  - [Finding YouTube Links (New)](#finding-youtube-links-new)
 - [Directory Structure](#directory-structure)
 - [Customization](#customization)
 - [Troubleshooting](#troubleshooting)
@@ -56,6 +56,9 @@ This will install all required Python packages:
 - jinja2
 - pypdf2
 - openpyxl
+- youtube-search-python
+- python-dotenv
+- qrcode
 
 ### Step 3: Install wkhtmltopdf
 
@@ -128,26 +131,6 @@ python src/generate_toc.py --version singer --toc-version 2
 
 Note: Projection version does not include a table of contents.
 
-### Creating Complete Songbooks
-
-To generate a complete songbook:
-
-```bash
-python src/generate_complete_songbook.py --version [singer|musician|projection] --toc-version [1|2|none]
-```
-
-Options:
-- `--version`: Songbook version to generate (singer, musician, or projection)
-- `--toc-version`: ToC version: 1 for ordered by ID, 2 for alphabetical by title, none for no ToC
-- `--templates-dir`: Directory containing template files (default: ../templates)
-- `--output-dir`: Directory to save output files (default: ../output)
-- `--json-file`: Path to the JSON file containing song data (default: ../data/songs.json)
-
-Example:
-```bash
-python src/generate_complete_songbook.py --version musician --toc-version 1
-```
-
 ### Generating All Pages for a Version (New)
 
 To generate all pages for a specific songbook version, including both types of Table of Contents (for singer/musician versions) and all individual song pages:
@@ -189,19 +172,43 @@ python src/build_final_songbook.py --version musician
 ```
 
 This script will:
-1. For `singer` and `musician` versions:
-    - Call `generate_toc.py` to create a Table of Contents (TOC) sorted by ID. This TOC is saved as `toc_by_id.pdf` in the version-specific output folder (e.g., `output/musicians_songbook/`).
-    - Call `generate_toc.py` again to create a TOC sorted by Title. This TOC is saved as `toc_by_title.pdf` in the same folder.
-2. For `projection` version, TOC generation is skipped.
-3. Scan the version-specific output folder (e.g., `output/musicians_songbook/`) for all `song_*.pdf` files.
-4. Sort the song PDFs numerically by their `inner_id` (extracted from the filename).
-5. Merge the PDFs in the following order:
-    - `toc_by_id.pdf` (if applicable)
-    - `toc_by_title.pdf` (if applicable)
+1. Look for `toc_by_id.pdf` and `toc_by_title.pdf` in the version-specific output folder (e.g., `output/musicians_songbook/`) and add them to the merge list if found. For `projection` version, TOCs are skipped.
+2. Scan the version-specific output folder for all `song_*.pdf` files.
+3. Sort the song PDFs numerically based on the number in their filename (which corresponds to `inner_id`).
+4. Merge the PDFs in the following order:
+    - `toc_by_id.pdf` (if applicable and found)
+    - `toc_by_title.pdf` (if applicable and found)
     - All sorted `song_*.pdf` files.
-6. Save the final merged document directly in the `output/` directory with a filename like `{version}_SironSongbook_Merged.pdf` (e.g., `musician_SironSongbook_Merged.pdf`).
+5. Save the final merged document directly in the `output/` directory with a filename like `{version}_SironSongbook_Merged.pdf` (e.g., `musician_SironSongbook_Merged.pdf`).
 
-**Important Note:** This script assumes that the individual song PDF files (e.g., `song_1.pdf`, `song_2.pdf`) have already been generated in the respective version's subdirectory within the `output` folder (e.g., `output/singers_songbook/`). You should run `generate_full_songbook.py` or `generate_songbook_page.py` for all songs before running this script.
+**Important Note:** This script assumes that the individual song PDF files (e.g., `song_1.pdf`, `song_2.pdf`) and TOCs have already been generated in the respective version's subdirectory within the `output` folder. You should run `generate_full_songbook.py` before running this script.
+
+### Finding YouTube Links (New)
+
+To find YouTube links for all songs in your `songs.json` file and export them to a text file:
+
+```bash
+python src/find_youtube_links.py
+```
+
+Options:
+- `--songs_json`: (Optional) Path to the input `songs.json` file. Defaults to the path specified in `config.json` (usually `data/songs.json`).
+- `--output_txt`: (Optional) Path to the output TXT file where links will be saved. Defaults to `output/youtube_links.txt`.
+
+Example:
+```bash
+python src/find_youtube_links.py --songs_json data/my_custom_songs.json --output_txt output/custom_links.txt
+```
+
+This script will:
+1. Read each song from the specified `songs.json` file.
+2. If a song entry already has a `youtube_link` field, that link is used.
+3. Otherwise, it searches YouTube for the song using its title and author.
+    - It prioritizes "official music videos".
+    - If not found, it looks for "audio" or "lyric" videos, preferring the most viewed.
+    - It tries to exclude live or concert recordings.
+4. Write the found YouTube link (or a "-" if no suitable link is found) to the output TXT file, one link per line, corresponding to each song in the input JSON.
+5. The `songs.json` file itself is **not** modified by this script. If you want to update `songs.json` with these links, you'll need to do that manually or with another script.
 
 ## Directory Structure
 
@@ -211,16 +218,19 @@ siron-generator/
 │   ├── Siron.xlsx          # Input Excel file
 │   └── songs.json          # Converted JSON data
 ├── output/
+│   ├── youtube_links.txt   # Exported YouTube links
 │   ├── singers_songbook/   # Generated PDFs for singers
 │   ├── musicians_songbook/ # Generated PDFs for musicians
-│   └── projection_songbook/ # Generated PDFs for projection
+│   ├── projection_songbook/ # Generated PDFs for projection
+│   ├── singer_SironSongbook_Merged.pdf   # Final merged singer songbook
+│   └── musician_SironSongbook_Merged.pdf # Final merged musician songbook
 ├── src/
 │   ├── generate_json.py     # Converts Excel to JSON
 │   ├── generate_songbook_page.py # Generates individual song pages
 │   ├── generate_toc.py      # Generates table of contents
-│   ├── generate_complete_songbook.py # Generates entire songbooks (likely to be deprecated or merged)
 │   ├── generate_full_songbook.py # Generates all pages for a version (TOCs + all songs)
-│   └── build_final_songbook.py # Merges TOCs and all song pages for a version into a single PDF
+│   ├── build_final_songbook.py # Merges TOCs and all song pages for a version into a single PDF
+│   └── find_youtube_links.py # Finds YouTube links for songs
 └── templates/
     ├── toc_template_1.html  # ToC ordered by ID
     ├── toc_template_2.html  # ToC ordered alphabetically
@@ -230,6 +240,15 @@ siron-generator/
 ```
 
 ## Customization
+
+### Configuration (`config.json`)
+Many aspects of the generation process are controlled by `config.json`. This includes:
+- Default file paths (data directory, output directory, specific filenames).
+- Excel column mappings for `generate_json.py`.
+- Guitar chords recognized by `generate_songbook_page.py`.
+- Lyrics length thresholds for font size adjustments and column breaks.
+- Page parameters (size, margins, orientation, zoom) for PDF generation via `wkhtmltopdf`.
+- Template filenames.
 
 ### Template Customization
 
@@ -248,6 +267,10 @@ Each template includes CSS styling within the `<style>` section that can be cust
 - Colors
 - Spacing and margins
 - Page dimensions
+
+### WKHTMLTOPDF Path
+
+The path to the `wkhtmltopdf` executable is typically defined in `config.json` or can be set via the `WKHTMLTOPDF_PATH` environment variable. Ensure this path is correct for your system.
 
 ## Troubleshooting
 
