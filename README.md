@@ -106,8 +106,10 @@ Options:
 
 Example:
 ```bash
-python src/generate_songbook_page.py --song-id ZS08 --version musician
+python src/generate_songbook_page.py --song-id 1 --version musician
 ```
+
+Note: `--song-id` refers to the `inner_id` of the song (a sequential number automatically assigned when converting from Excel to JSON), not necessarily the original ID from the Excel file.
 
 ### Generating Table of Contents
 
@@ -210,6 +212,8 @@ This script will:
 4. Write the found YouTube link (or a "-" if no suitable link is found) to the output TXT file, one link per line, corresponding to each song in the input JSON.
 5. The `songs.json` file itself is **not** modified by this script. If you want to update `songs.json` with these links, you'll need to do that manually or with another script.
 
+   To use these found links for features like QR codes in the singer's songbook (which are generated based on the `youtube` field in `songs.json`), you would need to manually update the `youtube` field for the respective songs in your `songs.json` file before generating the song pages.
+
 ## Directory Structure
 
 ```
@@ -219,11 +223,12 @@ siron-generator/
 │   └── songs.json          # Converted JSON data
 ├── output/
 │   ├── youtube_links.txt   # Exported YouTube links
-│   ├── singers_songbook/   # Generated PDFs for singers
-│   ├── musicians_songbook/ # Generated PDFs for musicians
-│   ├── projection_songbook/ # Generated PDFs for projection
+│   ├── singers_songbook/   # Generated PDFs for singers (individual songs, TOCs)
+│   ├── musicians_songbook/ # Generated PDFs for musicians (individual songs, TOCs)
+│   ├── projection_songbook/ # Generated PDFs for projection (individual songs)
 │   ├── singer_SironSongbook_Merged.pdf   # Final merged singer songbook
-│   └── musician_SironSongbook_Merged.pdf # Final merged musician songbook
+│   ├── musician_SironSongbook_Merged.pdf # Final merged musician songbook
+│   └── projection_SironSongbook_Merged.pdf # Final merged projection songbook
 ├── src/
 │   ├── generate_json.py     # Converts Excel to JSON
 │   ├── generate_songbook_page.py # Generates individual song pages
@@ -232,11 +237,12 @@ siron-generator/
 │   ├── build_final_songbook.py # Merges TOCs and all song pages for a version into a single PDF
 │   └── find_youtube_links.py # Finds YouTube links for songs
 └── templates/
-    ├── toc_template_1.html  # ToC ordered by ID
-    ├── toc_template_2.html  # ToC ordered alphabetically
+    ├── toc_template.html  # Template for Table of Contents
     ├── singer_song_page_template.html # Singer version template
     ├── musician_song_page_template.html # Musician version template
-    └── projection_song_page_template.html # Projection version template
+    ├── projection_song_page_template.html # Projection version template
+    └── static/               # For CSS, fonts, or images used by templates
+        └── # (e.g., style.css)
 ```
 
 ## Customization
@@ -254,10 +260,10 @@ Many aspects of the generation process are controlled by `config.json`. This inc
 
 You can modify the HTML templates in the `templates` directory to change the appearance of your songbooks:
 
-- **Singer's template**: Modify `singer_song_page_template.html`
-- **Musician's template**: Modify `musician_song_page_template.html`
-- **Projection template**: Modify `projection_song_page_template.html`
-- **Table of Contents templates**: Modify `toc_template_1.html` or `toc_template_2.html`
+- **Singer's template**: Modify `singer_song_page_template.html` (configurable via `config.json`)
+- **Musician's template**: Modify `musician_song_page_template.html` (configurable via `config.json`)
+- **Projection template**: Modify `projection_song_page_template.html` (configurable via `config.json`)
+- **Table of Contents template**: Modify `toc_template.html` (configurable via `config.json`)
 
 ### CSS Styling
 
