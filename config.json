@@ -39,7 +39,7 @@
       "orientation": "Portrait",
       "margin_top": "15",
       "margin_bottom": "15",
-      "margin_left": "20",
+      "margin_left": "15",
       "margin_right": "15",
       "extra_options": ["--enable-local-file-access"]
     },
@@ -48,7 +48,7 @@
       "orientation": "Portrait",
       "margin_top": "15",
       "margin_bottom": "15",
-      "margin_left": "20",
+      "margin_left": "15",
       "margin_right": "15",
       "extra_options": ["--enable-local-file-access"]
     }
@@ -70,7 +70,7 @@
   },
   "lyrics": {
     "lines_thresholds": {
-      "small": 45,
+      "small": 40,
       "large": 25
     },
     "column_break_threshold": 60
@@ -87,13 +87,14 @@
     "D", "Dm", "D7", "Dmaj7", "Dm7", "Dsus4", "Ddim", "Daug", "Dadd9", "D6", "Dm6", "D5",
     "D#", "D#m", "D#7", "D#maj7", "D#m7", "D#sus4", "D#dim", "D#aug", "D#add9", "D#6", "D#m6", "D#5",
     "Eb", "Ebm", "Eb7", "Ebmaj7", "Ebm7", "Ebsus4", "Ebdim", "Ebaug", "Ebadd9", "Eb6", "Ebm6", "Eb5",
-    "E", "Em", "E7", "Emaj7", "Em7", "Esus4", "Edim", "Eaug", "Eadd9", "E6", "Em6", "E5",
+    "E", "Em", "E7", "Emaj7", "Em7", "Esus4", "Edim", "Eaug", "Eadd9", "E6", "Em6", "E5","E4",
     "F", "Fm", "F7", "Fmaj7", "Fm7", "Fsus4", "Fdim", "Faug", "Fadd9", "F6", "Fm6", "F5",
     "F#", "F#m", "F#7", "F#maj7", "F#m7", "F#sus4", "F#dim", "F#aug", "F#add9", "F#6", "F#m6", "F#5",
     "Gb", "Gbm", "Gb7", "Gbmaj7", "Gbm7", "Gbsus4", "Gbdim", "Gbaug", "Gbadd9", "Gb6", "Gbm6", "Gb5",
     "G", "Gm", "G7", "Gmaj7", "Gm7", "Gsus4", "Gdim", "Gaug", "Gadd9", "G6", "Gm6", "G5",
     "G#", "G#m", "G#7", "G#maj7", "G#m7", "G#sus4", "G#dim", "G#aug", "G#add9", "G#6", "G#m6", "G#5",
     "Ab", "Abm", "Ab7", "Abmaj7", "Abm7", "Absus4", "Abdim", "Abaug", "Abadd9", "Ab6", "Abm6", "Ab5",
-    "H", "Hm", "H7", "Hmaj7", "Hm7", "Hsus4", "Hdim", "Haug", "Hadd9", "H6", "Hm6", "H5"
+    "H", "Hm", "H7", "Hmaj7", "Hm7", "Hsus4", "Hdim", "Haug", "Hadd9", "H6", "Hm6", "H5",
+    "F7/A","F/A", "E/C", "C7/E", "C7/G", "F/C", "Bb/C ", "B/C", "Bdim7"
   ]
 }

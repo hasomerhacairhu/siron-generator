@@ -168,6 +168,8 @@ def render_template(template_path, song_data):
 
 
     if song_data['version'] == "musician":
+        if len(song_data.get('lyrics_with_chords', '').strip())==0:
+            song_data['lyrics_with_chords'] = song_data.get('lyrics', '') # Copy from lyrics
         song_data['lyrics'] = process_line_breaks(wrap_chords_in_lyrics(song_data['lyrics_with_chords']))
     else: # For other versions like projection, handle lyrics if necessary
         song_data['lyrics'] = process_line_breaks(song_data['lyrics'])
