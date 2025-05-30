@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tartalomjegyzék - {% if sort_order == "id" %}azonosítói szerint{% else %}címei szerint{% endif %}</title> <!-- Dynamic title -->
+    <title>Tartalomjegyzék - {% if data.sort_by == "id" %}azonosítói szerint{% else %}címei szerint{% endif %}</title> <!-- Dynamic title -->
     <link rel="stylesheet" href="{{ data.static_path }}/style-a4.css" type="text/css" media="all" />
 </head>
 <body class="content-wrapper">
@@ -33,12 +33,12 @@
             </tr>
         </table>
     <h1 class="toc-header">Tartalomjegyzék</h1>
-    <div class="toc-subtitle">Dalok {% if sort_order == "id" %}azonosító szerint rendezve{% else %}cím szerint ábécérendben{% endif %}.</div> <!-- Dynamic subtitle -->
+    <div class="toc-subtitle">Dalok {% if data.sort_by == "id" %}azonosító szerint rendezve{% else %}cím szerint ábécérendben{% endif %}.</div> <!-- Dynamic subtitle -->
     
     <table class="toc-table">
         <thead>
             <tr>
-                {% if sort_order == "id" %}
+                {% if data.sort_by == "id" %}
                 <th class="toc-id-column">Azon</th>
                 <th class="toc-title-column">Cím</th>
                 <th class="toc-author-column">Szerző</th>
@@ -61,7 +61,7 @@
             {% for song in data.songs %}
                 {% if loop.index0 is divisibleby 2 %}
                 <tr>
-                    {% if sort_order == "id" %}
+                    {% if data.sort_by == "id" %}
                     <td class="toc-id-column">{{ song.id }}</td>
                     <td class="toc-title-column">{{ song.title }}</td>
                     <td class="toc-author-column">{{ song.author }}</td>
@@ -72,7 +72,7 @@
                     {% endif %}
                     <td class="toc-spacer-column"></td>
                     {% if loop.nextitem is defined %}
-                        {% if sort_order == "id" %}
+                        {% if data.sort_by == "id" %}
                         <td class="toc-id-column">{{ loop.nextitem.id }}</td>
                         <td class="toc-title-column">{{ loop.nextitem.title }}</td>
                         <td class="toc-author-column">{{ loop.nextitem.author }}</td>
